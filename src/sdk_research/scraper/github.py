@@ -31,12 +31,22 @@ class GitHubScraper:
             owner, repo = path_parts[0], path_parts[1]
             return owner, repo
         else:
-            raise ValueError(f"Invalid GitHub URL: {repo_url}")
-    
+            return "", "" # If the link supplied is not a GitHub link.
+
     def _fetch_release_notes(self, owner: str, repo: str) -> List[Release]:
         api_url = f"https://api.github.com/repos/{owner}/{repo}/releases"
-        r = requests.get(api_url)
-        r.raise_for_status()
+
+        try:
+            r = requests.get(api_url)
+            r.raise_for_status()
+        except Exception as e:
+            release = Release(
+                version="v9.9.9.9",
+                release_date=f"GIT SCRAP ERROR: {e}",
+                notes=f"GIT SCRAP ERROR: {e}",
+                source_url=f"GIT SCRAP ERROR: {e}"
+            )
+            return [release]
 
         releases = []
         for rel in r.json():
