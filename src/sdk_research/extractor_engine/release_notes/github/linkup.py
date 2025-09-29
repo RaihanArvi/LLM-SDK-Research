@@ -1,57 +1,41 @@
-from sdk_research.extractor.github_extractor import GitHubScraper
-from src.sdk_research.core.schemas import SDKReleases
-"""
-This module contains functions to extract release notes from GitHub repositories given the SDK name.
-"""
+from typing import Tuple
+from src.sdk_research.crawler.linkup_crawler import LinkupCrawler
+from src.sdk_research.scraper.github import GitHubScraper
+from src.sdk_research.core.schemas import SDKScraperResult
 
-class LinkupReleaseNotesExtractor:
-    """
-    A class to extract release notes from GitHub repositories based on SDK names.
-    """
+class LinkupGitHubReleaseNotesExtractor():
 
-    def __init__(self):
+    def __init__(self, linkup_api):
         self.llm = None
-        self.crawler = None
+        self.crawler = LinkupCrawler(api=linkup_api)
+        self.scraper = GitHubScraper(self.crawler)
 
         # Description of the extractor
-        self.name, self.version = "LinkupReleaseNotesExtractor", "0.1.0"
+        self._name, self._version = "LinkupGitHubReleaseNotesExtractor", "0.1.0"
+        self._description = "Linkup GitHub release notes extractor"
 
-    def _extract_sdk_releases(self, sdk_name: str) -> SDKReleases:
-        """
-        Internal method to extract SDK releases using the GitHub crawler.
+    def extract(self, prompt, sdk_name, platform=None) -> Tuple[SDKScraperResult, str]:
+        content, github_repo_link = self.scraper.fetch(prompt, sdk_name, platform)
 
-        :param sdk_name: The name of the SDK whose release notes are to be extracted.
-        :return: An SDKReleases object containing the extracted release notes.
-        """
-        relevant_links = None
-
-        releases = GitHubScraper().fetch(top_url)
-        return SDKReleases(content=releases)
-
-    def extract(sdk_name: str) -> SDKScrapperResult:
-        """
-        Extracts release notes from the GitHub repository corresponding to the given SDK name.
-
-        :param sdk_name: The name of the SDK whose release notes are to be extracted.
-        :return: An SDKReleases object containing the extracted release notes.
-        """
-        releases = self._extract_sdk_releases(sdk_name)
-        return SDKScrapperResult(
-            name=self.name,
-            version=self.version,
-            releases=releases
+        result = SDKScraperResult(
+            extractor_name=self._name,
+            extractor_version=self._version,
+            sdk_name=sdk_name,
+            platform="NA" if platform == None else platform,
+            truncated="No",  ##########
+            releases=content,
         )
 
-    # Getters
+        return result, github_repo_link
 
     @property
     def name(self) -> str:
         return self._name
-    
+
     @property
     def version(self) -> str:
         return self._version
-    
+
     @property
-    def crawler(self) -> str:
-        return self.crawler
+    def description(self) -> str:
+        return self._description

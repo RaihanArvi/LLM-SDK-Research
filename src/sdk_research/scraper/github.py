@@ -69,7 +69,8 @@ class GitHubScraper:
     def fetch(self, prompt, sdk_name, platform) -> Tuple[List[Release], str]:
         prompt_formatted = self._format_prompt(prompt, sdk_name, platform)
 
-        top_repo_link = self.crawler.top_link(prompt_formatted)
+        self.crawler.crawl(prompt_formatted)
+        top_repo_link = self.crawler.top_link_result
         owner, repo = self._extract_owner_repo(top_repo_link)
 
         return self._fetch_release_notes(owner, repo), top_repo_link
