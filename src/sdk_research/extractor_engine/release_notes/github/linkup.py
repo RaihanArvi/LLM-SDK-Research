@@ -1,7 +1,7 @@
 from typing import Tuple
 from src.sdk_research.crawler.linkup_crawler import LinkupCrawler
 from src.sdk_research.scraper.github import GitHubScraper
-from src.sdk_research.core.schemas import SDKScraperResult
+from src.sdk_research.core.schemas import SDKReleaseNotesScraperResult
 
 class LinkupGitHubReleaseNotesExtractor():
 
@@ -14,10 +14,10 @@ class LinkupGitHubReleaseNotesExtractor():
         self._name, self._version = "LinkupGitHubReleaseNotesExtractor", "0.1.0"
         self._description = "Linkup GitHub release notes extractor"
 
-    def extract(self, prompt, sdk_name, platform=None) -> Tuple[SDKScraperResult, str]:
+    def extract(self, prompt, sdk_name, platform=None) -> Tuple[SDKReleaseNotesScraperResult, str]:
         content, github_repo_link = self.scraper.fetch(prompt, sdk_name, platform)
 
-        result = SDKScraperResult(
+        result = SDKReleaseNotesScraperResult(
             extractor_name=self._name,
             extractor_version=self._version,
             sdk_name=sdk_name,

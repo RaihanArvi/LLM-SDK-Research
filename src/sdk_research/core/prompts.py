@@ -69,15 +69,14 @@ Instructions:
 
 # Metadata Extractor
 
-metadata_extractor_prompt = """
-Developer: Begin with a concise checklist (3-7 bullets) of what you will do; keep items conceptual, not implementation-level. Extract the following fields about the SDK specified as "{SDK_NAME}":
+metadata_extractor_prompt = """Extract the following fields about {sdk_name} SDK:
 - purpose
 - developer
-- initial_release_date (in YYYY-MM-DD format or null)
-- key_features (array of strings or null)
-- license_type (one of: "open source", "proprietary", "freemium", or "other"; or null)
-- platforms (array containing any of: "iOS", "Android", "cross-platform"; or null)
-- example_apps (array of strings or null)
+- initial release date of the SDK (in YYYY-MM-DD format)
+- key_features (array of strings)
+- license_type (one of: "open source", "proprietary", "freemium", or "other")
+- platforms (array containing any of: "iOS", "Android", "cross-platform")
+- example_apps (2 - 3 example apps using the SDK with name and URL)
 
 Use only authoritative sources (e.g., official documentation, official repository, vendor website, or official package page). For each field, record its URL source in a `source_urls` object that maps field names to URLs (use null if a source isn’t found).
 
