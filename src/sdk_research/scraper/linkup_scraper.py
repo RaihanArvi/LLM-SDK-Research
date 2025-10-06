@@ -77,18 +77,16 @@ class LinkupWebsiteReleaseNotesScraper:
 
     def _parse_response(self, response) -> List[Release]:
         try:
-            parsed = json.loads(response)
-
             # Take the first source URL
-            source_url = parsed["sources"][0]["url"]
+            source_url = response.sources[0].url
 
             releases = []
-            for v in parsed["data"]["versions"]:
+            for v in response.data["versions"]:
                 releases.append(
                     Release(
-                        version=v["version_number"],
+                        version=v["version"],
                         release_date=v["release_date"],
-                        notes=v["summary_notes"],
+                        notes=v["notes"],
                         source_url=source_url,
                     )
                 )
