@@ -112,7 +112,7 @@ class MetadataStructuredOutput(BaseModel):
 
 # Linkup
 
-schema_linkup = """{
+linkup_schema = """{
   "type": "object",
   "properties": {
     "versions": {
