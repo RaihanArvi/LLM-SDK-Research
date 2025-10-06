@@ -45,9 +45,11 @@ class LinkupMetadataScraper:
 
     def _parse_response(self, response) -> MetadataSchema:
         try:
-            data = response.model_dump()["data"]
+            data = response.data
 
-            flat_source_urls = list(set(data["source_urls"].values()))
+            source_urls = []
+            for source in response.sources:
+                source_urls.append(source.url)
 
             # Create MetadataSchema instance
             metadata = MetadataSchema(
@@ -55,30 +57,32 @@ class LinkupMetadataScraper:
                 developer=data["developer"],
                 initial_release_date=data["initial_release_date"],
                 key_features=data["key_features"],
+                documentation_url=data["documentation_url"],
                 license_type=data["license_type"],
                 platforms=data["platforms"],
                 example_apps=data["example_apps"],
-                source_urls=flat_source_urls
+                source_urls=source_urls
             )
 
             return metadata
 
         except Exception as e:
             exception_example_app = ExampleApp(
-                name= f"FETCH ERROR: {e}",
-                developer= f"FETCH ERROR: {e}",
-                url= f"FETCH ERROR: {e}",
+                name= f"PARSE ERROR: {e}",
+                developer= f"PARSE ERROR: {e}",
+                url= f"PARSE ERROR: {e}",
             )
 
             exception_response = MetadataSchema(
-                purpose=f"FETCH ERROR: {e}",
-                developer=f"FETCH ERROR: {e}",
-                initial_release_date=f"FETCH ERROR: {e}",
-                key_features = [f"FETCH ERROR: {e}"],
-                license_type = f"FETCH ERROR: {e}",
-                platforms = [f"FETCH ERROR: {e}"],
+                purpose=f"PARSE ERROR: {e}",
+                developer=f"PARSE ERROR: {e}",
+                initial_release_date=f"PARSE ERROR: {e}",
+                key_features = [f"PARSE ERROR: {e}"],
+                documentation_url = f"PARSE ERROR: {e}",
+                license_type = f"PARSE ERROR: {e}",
+                platforms = [f"PARSE ERROR: {e}"],
                 example_apps = [exception_example_app],
-                source_urls = ["www.FETCHERROR.com"],
+                source_urls = ["www.PARSEERROR.com"],
             )
 
             return exception_response

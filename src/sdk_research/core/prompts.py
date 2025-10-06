@@ -72,8 +72,9 @@ Instructions:
 metadata_extractor_prompt = """Extract the following fields about {sdk_name} SDK:
 - purpose
 - developer
-- initial release date of the SDK (in YYYY-MM-DD format)
+- string of initial release date of the SDK (in YYYY-MM-DD format).
 - key_features (array of strings)
+- documentation URL / official website.
 - license_type (one of: "open source", "proprietary", "freemium", or "other")
 - platforms (array containing any of: "iOS", "Android", "cross-platform")
 - example_apps (2 - 3 example apps using the SDK with name and URL)
@@ -85,51 +86,67 @@ If any value cannot be found, set it to null. Output exactly the JSON structure 
 After forming the JSON output, validate that all required fields and types match the Output Format. If any validation fails, self-correct and re-verify before returning the result.
 """
 
-metadata_extractor_output_format = """
-### Output Format
-Return a JSON object with:
-- purpose (string or null)
-- developer (string or null)
-- initial_release_date (string or null)
-- key_features (array of strings or null)
-- license_type ("open source", "proprietary", "freemium", "other", or null)
-- platforms (list of supported platforms, e.g. Android, iOS, cross-platform)
-- example_apps (list of 2-3 objects with fields: app, evidence_url)
-- source_urls (object mapping each field name to a URL or null)
-
-#### Example:
-
-{
-  "purpose": "A cross-platform image processing SDK.",
-  "developer": "Imagix Corp.",
-  "initial_release_date": "2020-08-15",
-  "key_features": ["Fast image filtering", "GPU acceleration"],
-  "license_type": "open source",
-  "platforms": ["iOS", "Android", "cross-platform"],
-  "example_apps": [
-    {
-      "name": "ML Kit sample apps",
-      "url": "https://github.com/googlesamples/mlkit"
-    }
-  ],
-  "source_urls": {
-    "purpose": "https://imagix.dev/docs",
-    "developer": "https://imagix.dev/about",
-    "initial_release_date": "https://github.com/imagix/releases",
-    "key_features": "https://imagix.dev/features",
-    "license_type": "https://github.com/imagix/LICENSE",
-    "platforms": "https://imagix.dev/docs/platforms",
-    "example_apps": null
-  }
-}
-
-Ensure strict adherence to the example structure and field types.
-"""
+# metadata_extractor_output_format = """
+# ### Output Format
+# Return a JSON object with:
+# - purpose (string or null)
+# - developer (string or null)
+# - initial_release_date (string or null)
+# - key_features (array of strings or null)
+# - license_type ("open source", "proprietary", "freemium", "other", or null)
+# - platforms (list of supported platforms, e.g. Android, iOS, cross-platform)
+# - example_apps (list of 2-3 objects with fields: app, evidence_url)
+# - source_urls (object mapping each field name to a URL or null)
+#
+# #### Example:
+#
+# {
+#   "purpose": "A cross-platform image processing SDK.",
+#   "developer": "Imagix Corp.",
+#   "initial_release_date": "2020-08-15",
+#   "key_features": ["Fast image filtering", "GPU acceleration"],
+#   "license_type": "open source",
+#   "platforms": ["iOS", "Android", "cross-platform"],
+#   "example_apps": [
+#     {
+#       "name": "ML Kit sample apps",
+#       "url": "https://github.com/googlesamples/mlkit"
+#     }
+#   ],
+#   "source_urls": {
+#     "purpose": "https://imagix.dev/docs",
+#     "developer": "https://imagix.dev/about",
+#     "initial_release_date": "https://github.com/imagix/releases",
+#     "key_features": "https://imagix.dev/features",
+#     "license_type": "https://github.com/imagix/LICENSE",
+#     "platforms": "https://imagix.dev/docs/platforms",
+#     "example_apps": null
+#   }
+# }
+#
+# Ensure strict adherence to the example structure and field types.
+# """
 
 # ----- Release Notes Scraper Website Prompt ----- #
 
 prompt_website_release_notes_platform_specific = """
 Retrieve the release notes history for {sdk_name} SDK, specifically for the {platform} version.
+Provide a list of 10 versions with emphasis to these criteria:
+
+1. Include the most recent release (latest version).
+2. Include all major updates.
+3. Include the very first (initial) release.
+
+Parse it into the provided JSON format, with the fields:
+"version" : The version number of the release (ex. v1.0.0).
+"release_date" : Release date of the corresponding version in YYYY-MM-DD format.
+"notes" : A summary of the changes.
+
+Present the versions in descending chronological order (from most recent to oldest).
+"""
+
+prompt_website_release_notes_general = """
+Retrieve the release notes history for {sdk_name} SDK.
 Provide a list of 10 versions with emphasis to these criteria:
 
 1. Include the most recent release (latest version).

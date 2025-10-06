@@ -52,40 +52,44 @@ class SDKReleaseNotesScraperResult(BaseModel):
 # For Metadata Extractor:
 
 class ExampleApp(BaseModel):
-    name: str = Field(..., description="Name of the mobile app using this SDK.")
-    developer: Optional[str] = Field(..., description="Developer of the mobile app using this SDK.")
-    url: Optional[str] = Field(..., description="Links to the reference of the mobile app.")
+    name: Optional[str] = Field(None, description="Name of the mobile app using this SDK.")
+    developer: Optional[str] = Field(None, description="Developer of the mobile app using this SDK.")
+    url: Optional[str] = Field(None, description="Links to the reference of the mobile app.")
 
 class MetadataSchema(BaseModel):
-    purpose: str = Field(
-        ...,
+    purpose: Optional[str] = Field(
+        None,
         description="A concise explanation of what the SDK is used for."
     )
-    developer: str = Field(
-        ...,
+    developer: Optional[str] = Field(
+        None,
         description="The company or organization that developed the SDK."
     )
-    initial_release_date: str = Field(
-        ...,
+    initial_release_date: Optional[str] = Field(
+        None,
         description="The initial release date of the SDK in YYYY-MM-DD format."
     )
-    key_features: List[str] = Field(
-        ...,
+    key_features: Optional[List[str]] = Field(
+        default_factory=list,
         description="A short list of key features or capabilities of the SDK."
     )
     license_type: Optional[str] = Field(
-        ...,
+        None,
         description="The type of license (open source, proprietary, freemium, or other)."
     )
-    platforms: List[str] = Field(
+    documentation_url: Optional[str] = Field(
+        None,
+        description="Link to the official documentation of the SDK."
+    )
+    platforms: Optional[List[str]] = Field(
         default_factory=list,
         description="Supported platforms (iOS, Android, cross-platform, etc.)."
     )
-    example_apps: List[ExampleApp] = Field(
+    example_apps: Optional[List[ExampleApp]] = Field(
         default_factory=list,
         description="Example mobile apps that use this SDK."
     )
-    source_urls: List[str] = Field(
+    source_urls: Optional[List[str]] = Field(
         default_factory=list,
         description="List of authoritative source URLs used for extracting the information."
     )
@@ -117,9 +121,28 @@ class SDK(BaseModel):
     """
 
     """
+    index: int = Field(),
+    sdk_name: str = Field(),
+    platform: List[str] = Field(),
+    android_id_from_ios_perspective: str = Field(),
+    ios_id: str = Field(),
+    android_id: str = Field(),
+    ios_id_from_android_perspective: str = Field(),
+    company: str = Field(),
+    android_totins: str = Field(),
+    ios_totins: str = Field(),
+    totins: str = Field(),
+    function: str = Field(),
+    platforms: str = Field(),
+    url: str = Field(),
+
     metadata: SDKMetadataScraperResult = Field(
         ...,
         description="The time invariant metadata of the SDK of a specific scraper."
+    )
+    repository_url: List[str] = Field(
+        ...,
+        description="Link to the official repository URL of the SDK (if available)."
     )
     all_release_notes: List[SDKReleaseNotesScraperResult] = Field(
         ...,
