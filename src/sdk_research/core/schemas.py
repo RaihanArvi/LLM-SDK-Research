@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-
 # ----- Release Notes Models ----- #
 
 class Release(BaseModel):
@@ -20,14 +19,8 @@ class Release(BaseModel):
     source_url: str | None = Field(
         None, 
         description="The official URL pointing to the release notes or repository for this SDK version.")
-    
-# class SDKReleases(BaseModel):
-#     content: List[Release] = Field(
-#         ..., 
-#         description="A list of SDK release entries, each containing version, release_date, notes, and optional source_url."
-#     )
 
-class SDKScraperResult(BaseModel):
+class SDKReleaseNotesScraperResult(BaseModel):
     """
     Result from a specific SDK scraper engine.
     """
@@ -56,27 +49,14 @@ class SDKScraperResult(BaseModel):
         description="A list of SDK release entries, each containing version, release_date, notes, and optional source_url."
     )
 
-class AllScrapperResults(BaseModel):
-    """
-    A collection of results from multiple scraper engines.
-    """
-    results: List[SDKScraperResult] = Field(
-        ..., 
-        description="A list of scraper results, each containing metadata about the scraper and the SDK releases it found."
-    )
-
-
-# For Structured Output (if needed)
-
-from typing import List, Optional
-from pydantic import BaseModel, Field
+# For Metadata Extractor:
 
 class ExampleApp(BaseModel):
     name: str = Field(..., description="Name of the mobile app using this SDK.")
     developer: Optional[str] = Field(..., description="Developer of the mobile app using this SDK.")
     url: Optional[str] = Field(..., description="Links to the reference of the mobile app.")
 
-class MetadataStructuredOutput(BaseModel):
+class MetadataSchema(BaseModel):
     purpose: str = Field(
         ...,
         description="A concise explanation of what the SDK is used for."
@@ -85,16 +65,16 @@ class MetadataStructuredOutput(BaseModel):
         ...,
         description="The company or organization that developed the SDK."
     )
-    initial_release_date: Optional[str] = Field(
+    initial_release_date: str = Field(
         ...,
-        description="The initial release date of the SDK in YYYY-MM-DD format, or null if unknown."
+        description="The initial release date of the SDK in YYYY-MM-DD format."
     )
     key_features: List[str] = Field(
         ...,
         description="A short list of key features or capabilities of the SDK."
     )
     license_type: Optional[str] = Field(
-        None,
+        ...,
         description="The type of license (open source, proprietary, freemium, or other)."
     )
     platforms: List[str] = Field(
@@ -110,7 +90,44 @@ class MetadataStructuredOutput(BaseModel):
         description="List of authoritative source URLs used for extracting the information."
     )
 
-# Linkup
+class SDKMetadataScraperResult(BaseModel):
+    """
+
+    """
+    extractor_name: str = Field(
+        ...,
+        description="The name of the scraper engine that produced this result."
+    )
+    extractor_version: str = Field(
+        ...,
+        description="The version of the scraper engine (e.g., '1.0.0')."
+    )
+    sdk_name: str = Field(
+        ...,
+        description="The name of the SDK."
+    )
+    metadata: MetadataSchema = Field(
+        ...,
+        description="The time invariant metadata of the SDK."
+    )
+
+# Final Schema for one SDK:
+
+class SDK(BaseModel):
+    """
+
+    """
+    metadata: SDKMetadataScraperResult = Field(
+        ...,
+        description="The time invariant metadata of the SDK of a specific scraper."
+    )
+    all_release_notes: List[SDKReleaseNotesScraperResult] = Field(
+        ...,
+        description="All the release notes of the SDK of several scrapers."
+    )
+
+
+# For Linkup
 
 linkup_schema = """{
   "type": "object",

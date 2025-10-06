@@ -1,5 +1,5 @@
 from src.sdk_research.scraper.linkup_scraper import LinkupWebsiteReleaseNotesScraper
-from src.sdk_research.core.schemas import linkup_schema, SDKScraperResult
+from src.sdk_research.core.schemas import linkup_schema, SDKReleaseNotesScraperResult
 
 """
 Extract release notes from SDK's website/documentation using Linkup.
@@ -15,10 +15,10 @@ class LinkupWebsiteReleaseNotesExtractor:
         self._name, self._version = "LinkupWebsiteReleaseNotesExtractor", "0.1.0"
         self._description = "Linkup documentation/website release notes extractor."
 
-    def extract(self, prompt, sdk_name, platform=None) -> SDKScraperResult:
+    def extract(self, prompt, sdk_name, platform=None) -> SDKReleaseNotesScraperResult:
         releases = self.scraper.fetch(prompt, sdk_name, platform)
 
-        result = SDKScraperResult(
+        result = SDKReleaseNotesScraperResult(
             extractor_name=self._name,
             extractor_version=self._version,
             sdk_name=sdk_name,
