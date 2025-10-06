@@ -7,7 +7,7 @@ from typing import List, Optional
 class Release(BaseModel):
     version: str = Field(
         ..., 
-        description="The semantic version number of the SDK release (e.g., '2.12.0')."
+        description="The semantic version number of the SDK release (e.g., 'v2.12.0')."
     )
     release_date: str = Field(
         ..., 
@@ -120,9 +120,9 @@ linkup_schema = """{
       "items": {
         "type": "object",
         "properties": {
-          "version_number": { "type": "string" },
+          "version": { "type": "string" },
           "release_date": { "type": "string" },
-          "summary_notes": { "type": "string" }
+          "notes": { "type": "string" }
         }
       }
     }
