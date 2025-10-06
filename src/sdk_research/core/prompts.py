@@ -138,9 +138,9 @@ Provide a list of 10 versions with emphasis to these criteria:
 3. Include the very first (initial) release.
 
 Parse it into the provided JSON format, with the fields:
-"version_number" : The version number of the release (ex. v1.0.0).
-"release_date" : Release date of the corresponding version in DD-MM-YYYY format.
-"summary_notes" : A summary of the changes.
+"version" : The version number of the release (ex. v1.0.0).
+"release_date" : Release date of the corresponding version in YYYY-MM-DD format.
+"notes" : A summary of the changes.
 
 Present the versions in descending chronological order (from most recent to oldest).
 """

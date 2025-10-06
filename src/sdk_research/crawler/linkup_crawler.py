@@ -10,14 +10,8 @@ class LinkupCrawler(BaseCrawler):
         self.api = api
         self.client = LinkupClient(api_key=self.api)
 
-        if include_list is None:
-            self.include_domains = []
-        else:
-            self.include_domains = include_list
-        if exclude_list is None:
-            self.exclude_domains = []
-        else:
-            self.exclude_domains = exclude_list
+        self.include_domains = include_list
+        self.exclude_domains = exclude_list
 
         self.raw_results = ""
         self.link_results = []

@@ -4,10 +4,16 @@ import requests
 from src.sdk_research.core.schemas import Release
 """
 This module contains the GitHubCrawler class for crawling GitHub repositories to extract release notes.
+
+Given prompt format, SDK name, and platform (optional), it will:
+    1. Crawl to find relevant GitHub links, pick the top one. 
+    2. Extract release notes from the GitHub repository.
+    
 Inputs:
-- repo_url: str - The URL of the GitHub repository to crawl.
+- Crawler object.
+
 Outputs:
-- SDKReleases - An object containing a list of Release objects with version, release date,
+- List of Release objects.
 """
 
 class GitHubScraper:
@@ -17,14 +23,12 @@ class GitHubScraper:
 
     def __init__(self, crawler):
         """
-        Initializes the GitHubCrawler with the repository URL.
-
-        :param repo_url: The URL of the GitHub repository to crawl.
+        Initializes the GitHubCrawler.
         """
         self.crawler = crawler
     
     def _extract_owner_repo(self, repo_url: str):
-        parsed = urlparse(repo_url)  # splits into scheme, netloc, path, etc.
+        parsed = urlparse(repo_url)  # splits into schema, netloc, path, etc.
         path_parts = [p for p in parsed.path.split("/") if p]  # remove empty strings
         
         if len(path_parts) >= 2:
@@ -61,16 +65,16 @@ class GitHubScraper:
         return releases
     
     def _format_prompt(self, prompt, sdk_name, platform):
-        if platform != None:
+        if platform is not None:
             return prompt.format(sdk_name=sdk_name, platform=platform)
         else:
             return prompt.format(sdk_name=sdk_name)
     
     def fetch(self, prompt, sdk_name, platform) -> Tuple[List[Release], str]:
-        prompt_formatted = self._format_prompt(prompt, sdk_name, platform)
+        prompt_formatted = self._format_prompt(prompt, sdk_name, platform) # format prompt.
 
-        self.crawler.crawl(prompt_formatted)
-        top_repo_link = self.crawler.top_link_result
+        self.crawler.crawl(prompt_formatted) # find links.
+        top_repo_link = self.crawler.top_link_result # get the top link.
         owner, repo = self._extract_owner_repo(top_repo_link)
 
         return self._fetch_release_notes(owner, repo), top_repo_link
