@@ -110,6 +110,25 @@ class MetadataStructuredOutput(BaseModel):
         description="List of authoritative source URLs used for extracting the information."
     )
 
+# Linkup
+
+schema_linkup = """{
+  "type": "object",
+  "properties": {
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version_number": { "type": "string" },
+          "release_date": { "type": "string" },
+          "summary_notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}"""
+
 
 # class MetadataStructuredOutput(BaseModel):
 #     purpose: str = Field(
