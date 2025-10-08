@@ -1,3 +1,4 @@
+import time
 from urllib.parse import urlparse
 from typing import List, Tuple
 import requests
@@ -38,11 +39,46 @@ class GitHubScraper:
             return "", "" # If the link supplied is not a GitHub link.
 
     def _fetch_release_notes(self, owner: str, repo: str) -> List[Release]:
-        api_url = f"https://api.github.com/repos/{owner}/{repo}/releases"
+        api_url = f"https://api.github.com/repos/{owner}/{repo}/releases?per_page=100"
+        headers = {
+            "Accept": "application/vnd.github+json",
+        }
+
+        # Optional: include token to avoid rate limits
+        # token = os.getenv("GITHUB_TOKEN")
+        # if token:
+        #     headers["Authorization"] = f"Bearer {token}"
+
+        releases = []
+        url = api_url
 
         try:
-            r = requests.get(api_url)
-            r.raise_for_status()
+            while url:
+                r = requests.get(url, headers=headers, timeout=10)
+                r.raise_for_status()
+                data = r.json()
+
+                for rel in data:
+                    release = Release(
+                        version=rel.get("tag_name", "N/A"),
+                        release_date=(rel.get("published_at") or "N/A")[:10],
+                        notes=(rel.get("body") or "")[:1000],
+                        source_url=rel.get("html_url", "")
+                    )
+                    releases.append(release)
+
+                # Parse pagination links from the headers
+                link = r.headers.get("Link", "")
+                next_url = None
+                if link:
+                    parts = link.split(",")
+                    for part in parts:
+                        if 'rel="next"' in part:
+                            next_url = part[part.find("<") + 1: part.find(">")]
+                            break
+                url = next_url
+                time.sleep(0.25)
+
         except Exception as e:
             release = Release(
                 version="v9.9.9.9",
@@ -51,16 +87,6 @@ class GitHubScraper:
                 source_url=f"GIT SCRAP ERROR: {e}"
             )
             return [release]
-
-        releases = []
-        for rel in r.json():
-            release = Release(
-                version=rel["tag_name"],
-                release_date=rel["published_at"][:10],
-                notes=(rel["body"] or "")[:1000],
-                source_url=rel.get("html_url")
-            )
-            releases.append(release)
 
         return releases
     
