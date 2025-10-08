@@ -2,7 +2,10 @@ import time
 from urllib.parse import urlparse
 from typing import List, Tuple
 import requests
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from src.sdk_research.core.schemas import Release
+
+
 """
 This module contains the GitHubCrawler class for crawling GitHub repositories to extract release notes.
 
@@ -17,17 +20,20 @@ Outputs:
 - List of Release objects.
 """
 
+
 class GitHubScraper:
     """
     A class to crawl GitHub repositories and extract release notes.
     """
+
 
     def __init__(self, crawler):
         """
         Initializes the GitHubCrawler.
         """
         self.crawler = crawler
-    
+
+
     def _extract_owner_repo(self, repo_url: str):
         parsed = urlparse(repo_url)  # splits into schema, netloc, path, etc.
         path_parts = [p for p in parsed.path.split("/") if p]  # remove empty strings
@@ -37,6 +43,19 @@ class GitHubScraper:
             return owner, repo
         else:
             return "", "" # If the link supplied is not a GitHub link.
+
+
+    @retry(
+        reraise=True,
+        stop=stop_after_attempt(5),          # retry up to 5 times
+        wait=wait_exponential(multiplier=1, min=2, max=10),  # backoff: 2s, 4s, 8s, ...
+        retry=retry_if_exception_type(requests.exceptions.RequestException)
+    )
+    def _fetch_page(self, url: str, headers: dict) -> requests.Response:
+        """Fetch a single page of GitHub releases with retry logic."""
+        r = requests.get(url, headers=headers, timeout=10)
+        r.raise_for_status()
+        return r
 
     def _fetch_release_notes(self, owner: str, repo: str) -> List[Release]:
         api_url = f"https://api.github.com/repos/{owner}/{repo}/releases?per_page=100"
@@ -54,8 +73,7 @@ class GitHubScraper:
 
         try:
             while url:
-                r = requests.get(url, headers=headers, timeout=10)
-                r.raise_for_status()
+                r = self._fetch_page(url, headers)
                 data = r.json()
 
                 for rel in data:
@@ -89,13 +107,15 @@ class GitHubScraper:
             return [release]
 
         return releases
+
     
     def _format_prompt(self, prompt, sdk_name, platform):
         if platform is not None:
             return prompt.format(sdk_name=sdk_name, platform=platform)
         else:
             return prompt.format(sdk_name=sdk_name)
-    
+
+
     def fetch(self, prompt, sdk_name, platform) -> Tuple[List[Release], str]:
         prompt_formatted = self._format_prompt(prompt, sdk_name, platform) # format prompt.
 
