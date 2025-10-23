@@ -36,8 +36,11 @@ class SerperDevCrawler(BaseCrawler):
             res = conn.getresponse()
             data = res.read()
             raw_json_str = data.decode("utf-8")
+            raw_json = json.loads(raw_json_str)
 
-            return json.loads(raw_json_str)
+            self.raw_results = raw_json_str
+
+            return raw_json
 
         except Exception as e:
             # Error placeholder
