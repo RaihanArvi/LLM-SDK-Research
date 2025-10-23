@@ -30,6 +30,18 @@
 # }
 # """
 
+
+# ----- System Prompt ----- #
+
+release_notes_parser_instructions = """Extract all version history entries from the given content.  
+Output in the specified format only.  
+
+**Rules:**  
+- Keep all data exactly as is.  
+- Reformat dates to `YYYY-MM-DD`.  
+- Include every version listed."""
+
+
 # ----- Links Crawler Prompt ----- #
 
 github_link_platform_specific_query = "official github repository link for {sdk_name} sdk {platform} -inurl:fork -inurl:mirror"
