@@ -67,6 +67,10 @@ Instructions:
 """
 
 
+# Licence Agreements
+licence_agreements_general_query = "{sdk_name} SDK license agreement OR {sdk_name} EULA"
+
+
 # Metadata Extractor
 
 metadata_extractor_prompt = """Extract the following fields about {sdk_name} SDK:
