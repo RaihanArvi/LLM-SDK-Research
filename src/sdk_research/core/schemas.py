@@ -16,9 +16,12 @@ class Release(BaseModel):
         ..., 
         description="A concise summary of the changes, improvements, or fixes in this release."
     )
-    source_url: str | None = Field(
+    source_url: Optional[str] | None = Field(
         None, 
         description="The official URL pointing to the release notes or repository for this SDK version.")
+
+class Releases(BaseModel):
+    releases: List[Release] = Field(..., description="Release List")
 
 class SDKReleaseNotesScraperResult(BaseModel):
     """
