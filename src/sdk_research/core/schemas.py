@@ -147,6 +147,10 @@ class SDK(BaseModel):
         ...,
         description="Link to the official repository URL of the SDK (if available)."
     )
+    release_notes_url: List[str] = Field(
+        ...,
+        description="Link to the official release notes webpage URL found in the SDK documentation (if available)."
+    )
     all_release_notes: List[SDKReleaseNotesScraperResult] = Field(
         ...,
         description="All the release notes of the SDK of several scrapers."

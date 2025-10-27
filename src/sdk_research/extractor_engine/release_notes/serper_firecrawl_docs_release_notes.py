@@ -17,7 +17,7 @@ class SerperFirecrawlWebsiteReleaseNotesExtractor:
         self._description = "Serper + Firecrawl + Gemini documentation/website release notes extractor."
 
     def extract(self, prompt, sdk_name, platform=None) -> SDKReleaseNotesScraperResult:
-        releases = self.scraper.fetch(prompt, sdk_name, platform)
+        releases, release_notes_link = self.scraper.fetch(prompt, sdk_name, platform)
 
         result = SDKReleaseNotesScraperResult(
             extractor_name=self._name,
@@ -28,7 +28,7 @@ class SerperFirecrawlWebsiteReleaseNotesExtractor:
             releases=releases,
         )
 
-        return result
+        return result, release_notes_link
 
     @property
     def name(self) -> str:
