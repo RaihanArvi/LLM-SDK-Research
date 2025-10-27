@@ -42,6 +42,13 @@ Output in the specified format only.
 - Include every version listed."""
 
 
+# ----- Licence Agreement Prompt / Query ----- #
+
+licence_agreement_query_general = """("terms of service" OR "terms and conditions" OR "legal terms" OR "usage policy") "{sdk_name}" """
+
+licence_agreement_query_specific = """("terms of service" OR "terms and conditions" OR "legal terms" OR "usage policy") " for {sdk_name} {platform}" """
+
+
 # ----- Links Crawler Prompt ----- #
 
 github_link_platform_specific_query = "official github repository link for {sdk_name} sdk {platform} -inurl:fork -inurl:mirror"

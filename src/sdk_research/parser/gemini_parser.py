@@ -2,6 +2,7 @@ from src.sdk_research.core.prompts import release_notes_parser_instructions
 from src.sdk_research.core.schemas import Release
 from google import genai
 from google.genai import types
+from typing import List
 import json
 
 class GeminiParser():
@@ -94,7 +95,7 @@ class GeminiParser():
             return r
 
 
-    def parse(self, content):
+    def parse(self, content) -> List[Release]:
         raw_response = self.call_parser(content)
         list_release = self.validate_model(raw_response)
 
