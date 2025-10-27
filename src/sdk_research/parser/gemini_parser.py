@@ -80,11 +80,15 @@ class GeminiParser():
         return response
 
 
-    def validate_model(self, response):
+    def validate_model(self, response, changelog_source_link):
 
         try:
             releases_dict = json.loads(response.text)
             list_release = [Release.model_validate(release) for release in releases_dict['Releases']]
+
+            for release in list_release:
+                release.source_url = changelog_source_link
+
             return list_release
         except Exception as e:
             r = Release(
@@ -95,9 +99,9 @@ class GeminiParser():
             return [r]
 
 
-    def parse(self, content) -> List[Release]:
+    def parse(self, content, changelog_source_link) -> List[Release]:
         raw_response = self.call_parser(content)
-        list_release = self.validate_model(raw_response)
+        list_release = self.validate_model(raw_response, changelog_source_link)
 
         return list_release
 

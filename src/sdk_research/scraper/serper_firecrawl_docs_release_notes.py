@@ -49,8 +49,8 @@ class SerperFirecrawlWebsiteReleaseNotesScraper:
         return raw_webpage['data']['markdown']
 
 
-    def _parse_release_notes(self, raw_webpage) -> List[Release]:
-        return self.gemini_parser.parse(raw_webpage)
+    def _parse_release_notes(self, raw_webpage, changelog_link) -> List[Release]:
+        return self.gemini_parser.parse(raw_webpage, changelog_link)
 
 
     def fetch(self, prompt, sdk_name, platform) -> Tuple[List[Release], str]:
@@ -60,4 +60,4 @@ class SerperFirecrawlWebsiteReleaseNotesScraper:
         top_docs_link = self.crawler.top_link_result # get the top link.
         raw_webpage = self._fetch_webpage(top_docs_link)
 
-        return self._parse_release_notes(raw_webpage), top_docs_link
+        return self._parse_release_notes(raw_webpage, top_docs_link), top_docs_link
