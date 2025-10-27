@@ -188,11 +188,15 @@ class SDK(BaseModel):
         ...,
         description="Link to the official release notes webpage URL found in the SDK documentation (if available)."
     )
+    license_agreements_url: List[str] = Field(
+        ...,
+        description="Link to the official license agreeements webpage URLs."
+    )
     all_release_notes: List[SDKReleaseNotesScraperResult] = Field(
         ...,
         description="All the release notes of the SDK of several scrapers."
     )
-    initial_release_information: InitialReleaseInformation = Field(
+    initial_release_information: Optional[InitialReleaseInformation] = Field(
         ...,
         description="The initial release information analysis of the SDK.."
     )
