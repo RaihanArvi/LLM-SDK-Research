@@ -47,8 +47,8 @@ class SerperDevCrawler(BaseCrawler):
             error_dict = {
                 "organic": [
                     {
-                        "title": "First Organic Result: Python Lists",
-                        "link": "https://www.example.com/python-lists",
+                        "title": f"ERROR: {e}",
+                        "link": f"ERROR: {e}",
                     }
                 ]
             }

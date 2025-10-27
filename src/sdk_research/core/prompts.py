@@ -187,7 +187,7 @@ Present the versions in descending chronological order (from most recent to olde
 
 # ----- Release Notes Scraper Website Query ----- #
 
-query_website_release_notes_general = """ "{sdk_name} SDK release notes" OR "{sdk_name} SDK changelog" """
+query_website_release_notes_general = "'{sdk_name} SDK release notes' OR '{sdk_name} SDK changelog'"
 
-query_website_release_notes_specific = """ "{sdk_name} {platform} SDK release notes" OR "{sdk_name} {platform} SDK changelog" """
+query_website_release_notes_specific = "'{sdk_name} {platform} SDK release notes' OR '{sdk_name} {platform} SDK changelog'"
 

@@ -23,6 +23,42 @@ class Release(BaseModel):
 class Releases(BaseModel):
     releases: List[Release] = Field(..., description="Release List")
 
+
+# ----- Initial Release ----- #
+
+class InitialRelease(BaseModel):
+    extractor_name: str = Field(
+        ...,
+        description="The name of the extractor that is used to extract the release notes from the website / github."
+    )
+    extractor_version: str = Field(
+        ...,
+        description="The version of the extractor engine."
+    )
+    platform: str = Field(
+        ...,
+        description="The platform corresponding to the release."
+    )
+    initial_release: Release = Field(
+        None,
+        description="The initial release recorded using this method.")
+
+
+class InitialReleaseInformation(BaseModel):
+    discrepancy: bool = Field(
+        ...,
+        description="true if discrepancy of initial release YEAR was found between ANY of the LAST entry of the releases AND the metadata initial release. default to true if error in generating discrepancies.",
+    )
+    earliest_recorded_release_date: str = Field(
+        ...,
+        description="The date of earliest recorded release date of the initial release."
+    )
+    initial_releases: List[InitialRelease] = Field(
+        ...,
+        description="The platform corresponding to the release."
+    )
+
+
 class SDKReleaseNotesScraperResult(BaseModel):
     """
     Result from a specific SDK scraper engine.
@@ -118,6 +154,7 @@ class SDKMetadataScraperResult(BaseModel):
         description="The time invariant metadata of the SDK."
     )
 
+
 # Final Schema for one SDK:
 
 class SDK(BaseModel):
@@ -154,6 +191,10 @@ class SDK(BaseModel):
     all_release_notes: List[SDKReleaseNotesScraperResult] = Field(
         ...,
         description="All the release notes of the SDK of several scrapers."
+    )
+    initial_release_information: InitialReleaseInformation = Field(
+        ...,
+        description="The initial release information analysis of the SDK.."
     )
 
 

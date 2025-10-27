@@ -81,18 +81,18 @@ class GeminiParser():
 
 
     def validate_model(self, response):
-        releases_dict = json.loads(response.text)
 
         try:
+            releases_dict = json.loads(response.text)
             list_release = [Release.model_validate(release) for release in releases_dict['Releases']]
             return list_release
         except Exception as e:
             r = Release(
-                version = "PARSING ERROR.",
-                release_date= "PARSING ERROR.",
-                notes = "PARSING ERROR.",
+                version = f"PARSING ERROR: {e}.",
+                release_date= f"PARSING ERROR: {e}.",
+                notes = f"PARSING ERROR: {e}.",
             )
-            return r
+            return [r]
 
 
     def parse(self, content) -> List[Release]:
